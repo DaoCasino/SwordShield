@@ -31,8 +31,6 @@ contract Game is owned {
 	uint8 SHILED = 2;
 	uint8 ARMOR = 3;
 	
-	uint8 private shieldOwn = 0;
-	
 	enum GameState {
         InProgress,
         PlayerWon,
@@ -44,11 +42,13 @@ contract Game is owned {
         uint8 hero;
         uint8 weapon;
         uint8 shield;
-        uint8 result;
-        uint rnd;
+        GameState state;
+        uint8 rnd;
     }
 	
     mapping(bytes32 => Game) public listGames;
+    
+    event log(uint8 value);
 	
 	modifier checkArmor(uint8 value) {
         if (value > ARMOR && value < HELMET) {
@@ -71,23 +71,6 @@ contract Game is owned {
         _;
     }
 	
-	function Game(uint8 shield) {
-        shieldOwn = shield;
-    }
-	
-    // function selectType(uint8 hero)
-		// public
-		// checkType(hero)
-	// {
-		// listGames[msg.sender] = Game({
-            // player: msg.sender,
-            // hero: hero,
-            // weapon: 1,
-            // shield: 1,
-            // result: 0
-        // });
-	// }
-	
     function battle(uint8 weapon, bytes32 seed)
 		public
 		checkWeapon(weapon)
@@ -97,35 +80,27 @@ contract Game is owned {
             hero: ATTACKING,
             weapon: weapon,
             shield: 0,
-            result: 0
+            state: GameState.InProgress,
             rnd: 0
         });
 		
 	}
 	
-    function confirm(bytes32 random_id, uint8 _v, bytes32 _r, bytes32 _s)
+    function confirm(bytes32 random_id, uint8 shield, uint8 _v, bytes32 _r, bytes32 _s)
 		public
 		onlyOwner
 	{
-		if (ecrecover(weapon, _v, _r, _s) == owner) { // owner
+		if (ecrecover(random_id, _v, _r, _s) != owner) { // owner
             Game game = listGames[random_id];
-            uint rnd = uint256(sha3(_s, game.weapon, shieldOwn)) % 100;
+            uint8 rnd = uint8(sha3(_s, game.weapon, shield)) % 100;
             game.rnd = rnd;
-
+            log(rnd);
             if(rnd > 50){
 				listGames[random_id].state = GameState.PlayerWon;
 			} else {
 				listGames[random_id].state = GameState.PlayerLose;
 			}
         }
-	}
-	
-    function setArmor(uint8 armor)
-		public
-		checkArmor(armor)
-		onlyOwner
-	{
-		shieldOwn = armor;
 	}
 	
 	function getState(bytes32 random_id) 
