@@ -23,7 +23,7 @@ var addressContract = "";
 // testrpc
 var	addressRpcContract = "";
 // testnet
-var	addressTestContract = "0xe32db7dbccd6ba6f0ec3250cb802387c084078ea";
+var	addressTestContract = "0x40b308782fa05b847b266e597fedb806145a7611";
 
 var options_mainet = false;
 var options_testnet = false;
@@ -257,6 +257,9 @@ function loadData() {
 		} else {
 			openkey = localStorage.getItem('openkey')
 			privkey = localStorage.getItem('privkey')
+			if(0){
+				openkey="0x48614C4263a04566Df411F3eA3661AA42D6BfD06";
+			}
 		}
 		if (localStorage.getItem('daocasino_swordshield')){
 			var login_str = localStorage.getItem('daocasino_swordshield')
