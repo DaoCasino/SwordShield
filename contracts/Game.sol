@@ -88,17 +88,18 @@ contract Game is owned {
 	
     function confirm(bytes32 random_id, uint8 shield, uint8 _v, bytes32 _r, bytes32 _s)
 		public
-		onlyOwner
 	{
-		if (ecrecover(random_id, _v, _r, _s) != owner) { // owner
+		if (ecrecover(random_id, _v, _r, _s) != owner) { // will be change to RSA
             Game game = listGames[random_id];
-            uint8 rnd = uint8(sha3(_s, game.weapon, shield)) % 100;
-            game.rnd = rnd;
-            log(rnd);
-            if(rnd > 50){
-				listGames[random_id].state = GameState.PlayerWon;
-			} else {
-				listGames[random_id].state = GameState.PlayerLose;
+			if(game.player != msg.sender){
+				uint8 rnd = uint8(sha3(_s, game.weapon, shield)) % 100;
+				game.rnd = rnd;
+				log(rnd);
+				if(rnd > 50){
+					listGames[random_id].state = GameState.PlayerWon;
+				} else {
+					listGames[random_id].state = GameState.PlayerLose;
+				}
 			}
         }
 	}
