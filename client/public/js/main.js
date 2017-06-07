@@ -38,8 +38,8 @@ var raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame
     || window.mozRequestAnimationFrame || window.oRequestAnimationFrame
     || window.msRequestAnimationFrame
     || function(callback) { return window.setTimeout(callback, 1000 / 60); };
-	
-	
+
+
 
 function initGame() {
 	if(window.orientation == undefined){
@@ -47,9 +47,9 @@ function initGame() {
 	} else {
 		options_mobile = true;
 	}
-	
+
 	if(typeof console === "undefined"){ console = {}; }
-	
+
 	// random BG
 	var rndBg = Math.ceil(Math.random()*3);
 	$('body').css({'background-image':'url("/images/bg/bgArena_'+rndBg+'.jpg")'})
@@ -60,16 +60,16 @@ function initGame() {
     preloader = new PIXI.loaders.Loader();
 
     window.addEventListener("resize", onResize, false);
-	
+
 	startTime = getTimer();
     onResize();
     update();
-	
+
 	LoadBack = new PIXI.Container();
 	stage.addChild(LoadBack);
 	scrContainer = new PIXI.Container();
 	stage.addChild(scrContainer);
-	
+
 	var w = 400;
 	LoadPercent = addText("Game loading", 30, "#FFFFFF", "#000000", "center", w, 2.5);
 	LoadPercent.x = _W/2;
@@ -79,7 +79,7 @@ function initGame() {
 	tfVersion.x = _W-20;
 	tfVersion.y = _H-24;
 	LoadBack.addChild(tfVersion);
-	
+
 	loadManifest();
 }
 
@@ -89,9 +89,9 @@ function loadManifest(){
 	preloader.add("druid", "images/items/druid.png");
 	preloader.add("lizard", "images/items/lizard.png");
 	preloader.add("minotaur", "images/items/minotaur.png");
-	
+
 	// preloader.add("images/texture/ItemsTexure.json");
-	
+
 	preloader.on("progress", handleProgress);
 	preloader.load(handleComplete);
 }
@@ -101,12 +101,12 @@ function spritesLoad() {
 		return true;
 	}
 	sprites_loaded = true;
-	
+
 	var img, data;
 }
 
 function textureLoad() {
-	
+
 }
 
 function iniSet(set_name) {
@@ -116,13 +116,13 @@ function iniSet(set_name) {
 		return;
 	}
 	json = json.data;
-	
+
 	var jFrames = json.frames;
-	var data = preloader.resources[set_name].textures; 
+	var data = preloader.resources[set_name].textures;
 	var dataTexture = [];
 	var animOld = "";
 	// console.log("set_name:", set_name);
-	
+
 	if(data && jFrames){
 		for (var namePng in jFrames) {
 			var index = namePng.indexOf(".png");
@@ -131,7 +131,7 @@ function iniSet(set_name) {
 				nameFrame = namePng.slice(0, index);
 			}
 			// console.log("nameFrame:", nameFrame, index2);
-			
+
 			var index2 = nameFrame.indexOf("/");
 			if (index2 > 1) {
 				var type = nameFrame.slice(0, index2); // тип анимации
@@ -144,7 +144,7 @@ function iniSet(set_name) {
 				// console.log(nameFrame + ": ", anim, namePng);
 			}
 		}
-		
+
 		for (var name in dataTexture) {
 			var arrayFrames = dataTexture[name]; // какие кадры используются в сети
 			dataMovie[name] = arrayFrames;
@@ -154,18 +154,18 @@ function iniSet(set_name) {
 	}
 }
 
-function iniSetArt(set_name) {	
+function iniSetArt(set_name) {
 	var json = preloader.resources[set_name]
 	if(json){}else{
 		console.log("ERROR: " + set_name + " is undefined");
 		return;
 	}
 	json = json.data;
-	
+
 	var frames = json.frames;
-	var data = preloader.resources[set_name].textures; 
+	var data = preloader.resources[set_name].textures;
 	// console.log("set_name:", set_name);
-	
+
 	if(data && frames){
 		for (var namePng in frames) {
 			var index = namePng.indexOf(".png");
@@ -181,7 +181,7 @@ function iniSetArt(set_name) {
 
 function handleProgress(){
 	var percent = Math.ceil(preloader.progress)
-	
+
 	if(LoadPercent){
 		LoadPercent.setText("Game loading: " + percent + "%");
 	}
@@ -193,16 +193,16 @@ function handleComplete(evt) {
 	spritesLoad();
 	textureLoad();
     onResize();
-	
+
 	options_testnet = !options_mainet;
 	if(options_rpc){
 		version = version + " testrpc"
 	} else if(options_testnet){
 		version = version + " testnet"
 	}
-	
+
 	window.infura = new Infura();
-	
+
 	start();
 }
 
@@ -227,7 +227,7 @@ function update() {
 		if (ScreenGame) {
 			ScreenGame.update(diffTime);
 		}
-		
+
 		startTime = getTimer();
 	}
 }
@@ -266,7 +266,7 @@ function loadData() {
 }
 
 function checkData() {
-	
+
 }
 
 function resetData() {
@@ -307,7 +307,7 @@ function removeAllScreens() {
 
 function addScreen(name) {
 	removeAllScreens();
-	
+
 	if(name == "game"){
 		ScreenGame = new ScrGame();
 		scrContainer.addChild(ScreenGame);
@@ -323,7 +323,7 @@ function addButton(name, _x, _y, _scGr, _scaleX, _scaleY) {
 	if(_scaleX){}else{_scaleX = 1};
 	if(_scaleY){}else{_scaleY = 1};
 	var obj = new PIXI.Container();
-	
+
 	var objImg = null;
 	obj.setImg = function(name){
 		objImg = addObj(name);
@@ -342,7 +342,7 @@ function addButton(name, _x, _y, _scGr, _scaleX, _scaleY) {
 		} else {
 			obj.lock = null;
 		}
-		
+
 		obj.sc = _scGr;
 		obj.scale.x = _scGr*_scaleX;
 		obj.scale.y = _scGr*_scaleY;
@@ -363,9 +363,9 @@ function addButton(name, _x, _y, _scGr, _scaleX, _scaleY) {
 			obj.h = 50;
 		}
 	}
-	
+
 	obj.setImg(name);
-	
+
 	return obj;
 }
 
@@ -376,7 +376,7 @@ function addButton2(name, _x, _y, _scGr, _scaleX, _scaleY) {
 	if(_scaleX){}else{_scaleX = 1};
 	if(_scaleY){}else{_scaleY = 1};
 	var obj = new PIXI.Container();
-	
+
 	var data = preloader.resources[name];
 	var objImg = null;
 	if(data){
@@ -387,7 +387,7 @@ function addButton2(name, _x, _y, _scGr, _scaleX, _scaleY) {
 	} else {
 		return null;
 	}
-	
+
 	data = preloader.resources[name + "Over"];
 	if(data){
 		obj.over = new PIXI.Sprite(data.texture);
@@ -398,7 +398,7 @@ function addButton2(name, _x, _y, _scGr, _scaleX, _scaleY) {
 	} else {
 		obj.over = null;
 	}
-	
+
 	data = preloader.resources[name + "Lock"];
 	if(data){
 		obj.lock = new PIXI.Sprite(data.texture);
@@ -428,7 +428,7 @@ function addButton2(name, _x, _y, _scGr, _scaleX, _scaleY) {
 	if(obj.h < 50){
 		obj.h = 50;
 	}
-	
+
 	return obj;
 }
 
@@ -442,7 +442,7 @@ function addObj(name, _x, _y, _scGr, _scaleX, _scaleY, _anchor) {
 	var obj = new PIXI.Container();
 	obj.scale.x = _scGr*_scaleX;
 	obj.scale.y = _scGr*_scaleY;
-	
+
 	var objImg = null;
 	if(dataAnima[name]){
 		objImg = new PIXI.Sprite(dataAnima[name]);
@@ -480,7 +480,7 @@ function addObj(name, _x, _y, _scGr, _scaleX, _scaleY, _anchor) {
     obj.setRegY = function (procy) {
         objImg.anchor.y = procy;
     }
-	
+
 	return obj;
 }
 
@@ -492,9 +492,9 @@ function addText(str, size, color, glow, _align, width, px, font){
 	if(width){}else{width = 600};
 	if(px){}else{px = 2};
 	if(font){}else{font = fontMain};
-	
+
 	var style;
-	
+
 	if(glow){
 		style = {
 			font : size + "px " + font,
@@ -514,9 +514,9 @@ function addText(str, size, color, glow, _align, width, px, font){
 			wordWrapWidth : width
 		};
 	}
-	
+
 	var obj = new PIXI.Container();
-	
+
 	var tfMain = new PIXI.Text(str, style);
 	tfMain.y = 0;
 	obj.addChild(tfMain);
@@ -527,10 +527,10 @@ function addText(str, size, color, glow, _align, width, px, font){
 	} else {
 		tfMain.x = - tfMain.width/2;
 	}
-	
+
 	obj.width = Math.ceil(tfMain.width);
 	obj.height = Math.ceil(tfMain.height);
-	
+
 	obj.setText = function(value){
 		tfMain.text = value;
 		if(_align == "left"){
@@ -541,11 +541,11 @@ function addText(str, size, color, glow, _align, width, px, font){
 			tfMain.x = - tfMain.width/2;
 		}
 	}
-	
+
 	obj.getText = function(){
 		return tfMain.text;
 	}
-	
+
 	return obj;
 }
 
@@ -553,7 +553,7 @@ function visGame() {
 	//play
 	options_pause = false;
 	refreshTime();
-	
+
 	if(currentScreen){
 		if(ScreenGame){
 			ScreenGame.resetTimer();
