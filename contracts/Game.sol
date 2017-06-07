@@ -23,7 +23,7 @@ contract Game is owned {
 	uint8 ATTACKING = 1;
 	uint8 PROTECTING = 2;
 	
-	uint8 SWORD = 1;
+	uint8 STAFF = 1;
 	uint8 AXE = 2;
 	uint8 SPEAR = 3;
 	
