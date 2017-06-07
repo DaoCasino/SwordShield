@@ -89,6 +89,7 @@ function loadManifest(){
 	
 	preloader.add("btnAttack", "images/items/btnAttack.png");
 	preloader.add("btnDefense", "images/items/btnDefense.png");
+	preloader.add("btnBattle", "images/items/btnBattle.png");
 	preloader.add("druid", "images/items/druid.png");
 	preloader.add("lizard", "images/items/lizard.png");
 	preloader.add("minotaur", "images/items/minotaur.png");
