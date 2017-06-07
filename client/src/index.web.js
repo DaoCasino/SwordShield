@@ -1,10 +1,21 @@
 import './style.less'
-import $ from 'jquery'
 
+import Game from './game.js'
+
+let parseHashParams = hash=>{
+	if (hash.length<3) {
+		return {}
+	}
+
+	let params = {}
+	hash.split('#').forEach(str=>{
+		if (!str) { return }
+
+		let kv = str.split('=')
+		params[kv[0]]=kv[1]
+	})
+	return params
+}
 document.addEventListener('DOMContentLoaded', ()=>{
-	$('body').append('<div id="log"></div>')
-
-	var $log = $('#log')
-
-	$log.append('<div>'+window.location.hash+'</div>')
+	window.Game = new Game(parseHashParams(window.location.hash))
 })

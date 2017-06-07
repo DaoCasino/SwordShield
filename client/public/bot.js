@@ -145,7 +145,7 @@ status.command({
 	fullscreen:     true,
 
 	onSend: function(params, context){
-		var url = game_url+'#openkey='+context.from;
+		var url = game_url+'#openkey='+context.from+'#role='+user_role;
 
 		return {
 			title:           "Browser",
