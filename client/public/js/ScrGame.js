@@ -6,7 +6,7 @@ var _callback;
 var _mouseX;
 var _mouseY;
 var _deploy;
-var _curSkin = 1;
+var _curSkin = 0;
 
 function ScrGame() {
 	PIXI.Container.call( this );
@@ -57,7 +57,7 @@ ScrGame.prototype.createArt = function(){
 	shadow.scale.y = 0.5;
 	shadow.y = 150;
 	this.hero.addChild(shadow);
-	this.refreshSkin(_curSkin);
+	this.refreshSkin(1);
 	
 	var btnAttack = addButton2("btnAttack", _W/2-150, 300);
 	this.face_mc.addChild(btnAttack);
@@ -65,9 +65,21 @@ ScrGame.prototype.createArt = function(){
 	var btnDefense = addButton2("btnDefense", _W/2+150, 300);
 	this.face_mc.addChild(btnDefense);
 	this._arButtons.push(btnDefense);
+	var icoMinotaur = addButton2("ico_minotaur", _W/2-200, 1000);
+	this.face_mc.addChild(icoMinotaur);
+	this._arButtons.push(icoMinotaur);
+	var icoLizard = addButton2("ico_lizard", _W/2, 1000);
+	this.face_mc.addChild(icoLizard);
+	this._arButtons.push(icoLizard);
+	var icoDruid = addButton2("ico_druid", _W/2+200, 1000);
+	this.face_mc.addChild(icoDruid);
+	this._arButtons.push(icoDruid);
 	
 	btnAttack.overSc = true;
 	btnDefense.overSc = true;
+	icoMinotaur.overSc = true;
+	icoLizard.overSc = true;
+	icoDruid.overSc = true;
 }
 
 ScrGame.prototype.createText = function(){
@@ -79,6 +91,10 @@ ScrGame.prototype.createText = function(){
 }
 
 ScrGame.prototype.refreshSkin = function(value){
+	if(_curSkin == value){
+		return false;
+	}
+	_curSkin = value;
 	var skin = this.hero.skin;
 	if(skin){
 		this.hero.removeChild(skin);
@@ -146,6 +162,12 @@ ScrGame.prototype.clickCell = function(item_mc) {
 		api.battle(_curSkin);
 	} else if(item_mc.name == "btnDefense"){
 		api.defense(_curSkin);
+	} else if(item_mc.name == "ico_minotaur"){
+		this.refreshSkin(1);
+	} else if(item_mc.name == "ico_lizard"){
+		this.refreshSkin(2);
+	} else if(item_mc.name == "ico_druid"){
+		this.refreshSkin(3);
 	}
 }
 
