@@ -50,8 +50,11 @@ function initGame() {
 	
 	if(typeof console === "undefined"){ console = {}; }
 	
+	// random BG
+	var rndBg = Math.ceil(Math.random()*3);
+	$('body').css({'background-image':'url("/images/bg/bgArena_'+rndBg+'.jpg")'})
     //initialize the stage
-	renderer = PIXI.autoDetectRenderer(_W, _H);
+	renderer = PIXI.autoDetectRenderer(_W, _H,  {antialias: false, transparent: true, resolution: 1});
     stage = new PIXI.Container();
     document.body.appendChild(renderer.view);
     preloader = new PIXI.loaders.Loader();
@@ -83,9 +86,9 @@ function initGame() {
 function loadManifest(){
 	preloader = new PIXI.loaders.Loader();
 	console.log("loadManifest");
-	preloader.add("bg1", "images/bg/bg1.jpg");
-	preloader.add("bg2", "images/bg/bg2.jpg");
-	preloader.add("bg3", "images/bg/bg3.jpg");
+	preloader.add("druid", "images/items/druid.png");
+	preloader.add("lizard", "images/items/lizard.png");
+	preloader.add("minotaur", "images/items/minotaur.png");
 	
 	// preloader.add("images/texture/ItemsTexure.json");
 	
