@@ -7,23 +7,7 @@ var urlInfura = "https://mainnet.infura.io/JCnK5ifEPH9qcQkX0Ahl";
 var gThis;
 var repeatRequest = 0;
 
-var nameCall = {getPlayerBet:"f8aec9f5",
-				getSplitBet:"f8aec9f5",
-				getHouseCard:"792cc6be",
-				getHouseCardsNumber:"2594df3f",
-				getHouseScore:"ab44355d",
-				getGameId:"b2446968",
-				getInsurance:"dc3af6bc",
-				getPlayerCard:"0a113e84",
-				getPlayerCardsNumber:"f3f4294b",
-				getPlayerScore:"f3e1363e",
-				getPlayerSplitScore:"f3e1363e",
-				getSplitCard:"58927d1b",
-				getSplitCardsNumber:"f61849d8",
-				getGameState:"fcc19d69",
-				getSplitState:"fcc19d69",
-				isInsuranceAvailable:"715c07b6",
-				getAllowance:"dd62ed3e"}
+var nameCall = {getState:"09648a9d"}
 
 var Infura = function() {
 	gThis = this;
@@ -59,12 +43,7 @@ Infura.prototype.sendRequest = function(name, params, callback, seed){
 		var arParams = [params, "latest"]; // latest, pending
 		
 		switch(name){
-			case "deal":
-			case "hit":
-			case "stand":
-			case "split":
-			case "requestInsurance":
-			case "double":
+			case "battle":
 			case "confirm":
 				method = "eth_getTransactionCount";
 				break;

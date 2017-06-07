@@ -16,6 +16,7 @@ var renderer, stage, preloader; // pixi;
 var sprites_loaded = false;
 var fontMain = "Arial";
 var stats;
+var infura;
 
 // main
 var addressContract = "";
@@ -85,11 +86,18 @@ function initGame() {
 
 function loadManifest(){
 	preloader = new PIXI.loaders.Loader();
-	console.log("loadManifest");
+	
+	preloader.add("btnAttack", "images/items/btnAttack.png");
+	preloader.add("btnDefense", "images/items/btnDefense.png");
+	preloader.add("btnBattle", "images/items/btnBattle.png");
+	preloader.add("btnSelect", "images/items/btnSelect.png");
 	preloader.add("druid", "images/items/druid.png");
 	preloader.add("lizard", "images/items/lizard.png");
 	preloader.add("minotaur", "images/items/minotaur.png");
-
+	preloader.add("ico_druid", "images/items/ico_druid.png");
+	preloader.add("ico_lizard", "images/items/ico_lizard.png");
+	preloader.add("ico_minotaur", "images/items/ico_minotaur.png");
+	
 	// preloader.add("images/texture/ItemsTexure.json");
 
 	preloader.on("progress", handleProgress);
@@ -188,7 +196,6 @@ function handleProgress(){
 }
 
 function handleComplete(evt) {
-	console.log("handleComplete");
 	loadData();
 	spritesLoad();
 	textureLoad();
@@ -201,7 +208,7 @@ function handleComplete(evt) {
 		version = version + " testnet"
 	}
 
-	window.infura = new Infura();
+	infura = new Infura();
 
 	start();
 }
@@ -549,6 +556,16 @@ function addText(str, size, color, glow, _align, width, px, font){
 	return obj;
 }
 
+// standart method
+function hit_test_rec(mc, w, h, tx, ty) {
+	if(tx>mc.x-w/2 && tx<mc.x+w/2){
+		if(ty>mc.y-h/2 && ty<mc.y+h/2){
+			return true;
+		}
+	}
+	return false;
+}
+
 function visGame() {
 	//play
 	options_pause = false;
@@ -571,8 +588,4 @@ function hideGame() {
 visibly.onVisible(visGame)
 visibly.onHidden(hideGame)
 
-
-
-
 document.addEventListener('DOMContentLoaded', initGame)
-
