@@ -63,6 +63,8 @@ ScrGame.prototype.createArt = function(){
 	this.hero.addChild(shadow);
 	this.refreshSkin(1);
 	
+	var btnSelect = addObj("btnSelect");
+	this.face_mc.addChild(btnSelect);
 	var btnAttack = addButton2("btnAttack", _W/2-150, 200);
 	this.face_mc.addChild(btnAttack);
 	this._arButtons.push(btnAttack);
@@ -83,6 +85,9 @@ ScrGame.prototype.createArt = function(){
 	this._arButtons.push(icoDruid);
 	
 	this.btnBattle = btnBattle;
+	this.btnSelect = btnSelect;
+	btnSelect.x = btnAttack.x;
+	btnSelect.y = btnAttack.y;
 	
 	btnAttack.overSc = true;
 	btnDefense.overSc = true;
@@ -202,8 +207,12 @@ ScrGame.prototype.clickCell = function(item_mc) {
 	
 	if(item_mc.name == "btnAttack"){
 		this.btnBattle.visible = true;
+		this.btnSelect.x = item_mc.x;
+		this.btnSelect.y = item_mc.y;
 	} else if(item_mc.name == "btnDefense"){
 		this.btnBattle.visible = false;
+		this.btnSelect.x = item_mc.x;
+		this.btnSelect.y = item_mc.y;
 		api.defense(_curSkin);
 	} else if(item_mc.name == "btnBattle"){
 		api.battle(_curSkin);
