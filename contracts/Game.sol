@@ -58,7 +58,7 @@ contract Game is owned {
     }
 	
 	modifier checkWeapon(uint8 value) {
-        if (value > SPEAR && value < SWORD) {
+        if (value > SPEAR && value < STAFF) {
             throw;
         }
         _;

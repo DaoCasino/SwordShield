@@ -67,10 +67,10 @@ ScrGame.prototype.createArt = function(){
 	this.face_mc.addChild(btnSelect);
 	var btnAttack = addButton2("btnAttack", _W/2-150, 200);
 	this.face_mc.addChild(btnAttack);
-	this._arButtons.push(btnAttack);
+	// this._arButtons.push(btnAttack);
 	var btnDefense = addButton2("btnDefense", _W/2+150, 200);
 	this.face_mc.addChild(btnDefense);
-	this._arButtons.push(btnDefense);
+	// this._arButtons.push(btnDefense);
 	var btnBattle = addButton2("btnBattle", _W/2, 350);
 	this.face_mc.addChild(btnBattle);
 	this._arButtons.push(btnBattle);

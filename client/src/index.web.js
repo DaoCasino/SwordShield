@@ -1,3 +1,4 @@
+
 import './style.less'
 
 import Game from './game.js'
@@ -16,6 +17,7 @@ let parseHashParams = hash=>{
 	})
 	return params
 }
+
 document.addEventListener('DOMContentLoaded', ()=>{
 	window.Game = new Game(parseHashParams(window.location.hash))
 })
