@@ -23,16 +23,16 @@ export default class Wallet {
 	constructor() {
 		this.lib = ethWallet
 
-		if ( process.env.NODE_ENV !== 'server' ) {
-			DB.getItem('wallet', (err, wallet)=>{
-				if (wallet) {
-					_wallet = wallet
-					return
-				}
+		// if ( process.env.NODE_ENV !== 'server' ) {
+		// 	DB.getItem('wallet', (err, wallet)=>{
+		// 		if (wallet) {
+		// 			_wallet = wallet
+		// 			return
+		// 		}
 
-				this.create()
-			})
-		}
+		// 		this.create()
+		// 	})
+		// }
 
 		DB.data.get('wallet').on(wallet => {
 			if(wallet) _wallet = wallet

@@ -37,4 +37,18 @@ export const reverseForIn = (obj, f) => {
 	}
 }
 
+export const makeID = () => {
+	var count    = 64
+	var str      = "0x"
+	var possible = "abcdef0123456789"
+	var t        = ''+(new Date().getTime())
 
+	count -= t.length
+	str   += t
+
+    for( var i=0; i < count; i++ ){
+		str += possible.charAt(Math.floor(Math.random() * possible.length))
+	}
+
+    return str.toString(16)
+}
