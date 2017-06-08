@@ -1,3 +1,4 @@
+var abi = [{"constant":true,"inputs":[{"name":"player","type":"address"}],"name":"getDefenseMax","outputs":[{"name":"","type":"uint32"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"random_id","type":"bytes32"}],"name":"getState","outputs":[{"name":"","type":"uint8"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"player","type":"address"}],"name":"getAttackWin","outputs":[{"name":"","type":"uint32"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"meta_name","outputs":[{"name":"","type":"string"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"skin","type":"uint8"}],"name":"createUser","outputs":[],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"random_id","type":"bytes32"},{"name":"shield","type":"uint8"},{"name":"_v","type":"uint8"},{"name":"_r","type":"bytes32"},{"name":"_s","type":"bytes32"}],"name":"confirm","outputs":[],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"listUsers","outputs":[{"name":"player","type":"address"},{"name":"skin","type":"uint8"},{"name":"countAttackWin","type":"uint32"},{"name":"countAttackMax","type":"uint32"},{"name":"countDefenseWin","type":"uint32"},{"name":"countDefenseMax","type":"uint32"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"skin","type":"uint8"},{"name":"seed","type":"bytes32"},{"name":"rival","type":"address"}],"name":"battle","outputs":[],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"","type":"bytes32"}],"name":"listGames","outputs":[{"name":"player","type":"address"},{"name":"rival","type":"address"},{"name":"attaking","type":"uint8"},{"name":"protecting","type":"uint8"},{"name":"state","type":"uint8"},{"name":"rnd","type":"uint8"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"player","type":"address"}],"name":"getAttackMax","outputs":[{"name":"","type":"uint32"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"player","type":"address"}],"name":"getDefenseWin","outputs":[{"name":"","type":"uint32"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"type":"function"},{"anonymous":false,"inputs":[{"indexed":false,"name":"value","type":"uint8"}],"name":"logRnd","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"player","type":"address"}],"name":"logUser","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"attacking","type":"address"},{"indexed":true,"name":"protecting","type":"address"},{"indexed":false,"name":"seed","type":"bytes32"}],"name":"logGame","type":"event"}]
 
 var _W = 720;
 var _H = 1280;
@@ -16,14 +17,13 @@ var renderer, stage, preloader; // pixi;
 var sprites_loaded = false;
 var fontMain = "Arial";
 var stats;
-var infura;
 
 // main
 var addressContract = "";
 // testrpc
-var	addressRpcContract = "";
+var	addressRpcContract = "0x09720df949d447ed7669479786d4c7d19279bbb0";
 // testnet
-var	addressTestContract = "0x40b308782fa05b847b266e597fedb806145a7611";
+var	addressTestContract = "0x2bf355d0dc360e87a321599796b09e930bc3cf6f";
 
 var options_mainet = false;
 var options_testnet = false;
@@ -40,7 +40,7 @@ var raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame
     || window.msRequestAnimationFrame
     || function(callback) { return window.setTimeout(callback, 1000 / 60); };
 	
-	
+
 
 function initGame() {
 	if(window.orientation == undefined){
@@ -50,6 +50,12 @@ function initGame() {
 	}
 	
 	if(typeof console === "undefined"){ console = {}; }
+	
+	if(options_rpc){
+		addressContract = addressRpcContract;
+	}else if(options_testnet){
+		addressContract = addressTestContract;
+	}
 	
 	// random BG
 	var rndBg = Math.ceil(Math.random()*3);
@@ -87,6 +93,7 @@ function initGame() {
 function loadManifest(){
 	preloader = new PIXI.loaders.Loader();
 	
+	preloader.add("bntText", "images/items/bntText.png");
 	preloader.add("btnAttack", "images/items/btnAttack.png");
 	preloader.add("btnDefense", "images/items/btnDefense.png");
 	preloader.add("btnBattle", "images/items/btnBattle.png");
@@ -208,8 +215,6 @@ function handleComplete(evt) {
 		version = version + " testnet"
 	}
 	
-	infura = new Infura();
-	
 	start();
 }
 
@@ -252,14 +257,11 @@ function saveData() {
 function loadData() {
 	if(isLocalStorageAvailable()){
 		if(options_rpc){
-			// openkey = "0xf1f42f995046e67b79dd5ebafd224ce964740da3";
-			// privkey = "d3b6b98613ce7bd4636c5c98cc17afb0403d690f9c2b646726e08334583de101";
+			openkey = "0xf1f42f995046e67b79dd5ebafd224ce964740da3";
+			privkey = "d3b6b98613ce7bd4636c5c98cc17afb0403d690f9c2b646726e08334583de101";
 		} else {
-			openkey = localStorage.getItem('openkey')
-			privkey = localStorage.getItem('privkey')
-			if(0){
-				openkey="0x48614C4263a04566Df411F3eA3661AA42D6BfD06";
-			}
+			// openkey = localStorage.getItem('openkey')
+			// privkey = localStorage.getItem('privkey')
 		}
 		if (localStorage.getItem('daocasino_swordshield')){
 			var login_str = localStorage.getItem('daocasino_swordshield')

@@ -20,16 +20,9 @@ contract owned {
 contract Game is owned {
     string public meta_name    = 'SwordShield';
 	
-	uint8 ATTACKING = 1;
-	uint8 PROTECTING = 2;
-	
-	uint8 STAFF = 1;
-	uint8 AXE = 2;
-	uint8 SPEAR = 3;
-	
-	uint8 HELMET = 1;
-	uint8 SHILED = 2;
-	uint8 ARMOR = 3;
+	uint8 MINOTAUR = 1;
+	uint8 LIZARD = 2;
+	uint8 DRUID = 3;
 	
 	enum GameState {
         InProgress,
@@ -39,47 +32,65 @@ contract Game is owned {
 	
 	struct Game {
         address player;
-        uint8 hero;
-        uint8 weapon;
-        uint8 shield;
+        address rival;
+        uint8 attaking;
+        uint8 protecting;
         GameState state;
         uint8 rnd;
     }
+    
+	struct User {
+        address player;
+        uint8 skin;
+        uint32 countAttackWin;
+        uint32 countAttackMax;
+        uint32 countDefenseWin;
+        uint32 countDefenseMax;
+    }
 	
     mapping(bytes32 => Game) public listGames;
+    mapping(address => User) public listUsers;
     
-    event log(uint8 value);
+    event logRnd(uint8 value);
+    event logUser(address player);
 	
-	modifier checkArmor(uint8 value) {
-        if (value > ARMOR && value < HELMET) {
+	modifier checkSkin(uint8 value) {
+        if (value > DRUID && value < MINOTAUR) {
             throw;
         }
         _;
     }
-	
-	modifier checkWeapon(uint8 value) {
-        if (value > SPEAR && value < STAFF) {
-            throw;
-        }
-        _;
-    }
-	
-	modifier checkType(uint8 value) {
-        if (value > PROTECTING && value < ATTACKING) {
-            throw;
-        }
-        _;
-    }
-	
-    function battle(uint8 weapon, bytes32 seed)
+    
+    function createUser(uint8 skin)
 		public
-		checkWeapon(weapon)
+		checkSkin(skin)
+	{
+        logUser(msg.sender);
+		
+		User memory user = listUsers[msg.sender];
+        if (user.player != 0) {
+            throw;
+        }
+		
+	    listUsers[msg.sender] = User({
+            player: msg.sender,
+            skin: skin,
+            countAttackWin: 0,
+            countAttackMax: 0,
+            countDefenseWin: 0,
+            countDefenseMax: 0
+        });
+	}
+	
+    function battle(uint8 skin, bytes32 seed, address rival)
+		public
+		checkSkin(skin)
 	{
 		listGames[seed] = Game({
             player: msg.sender,
-            hero: ATTACKING,
-            weapon: weapon,
-            shield: 0,
+            rival: rival,
+            attaking: skin,
+            protecting: 0,
             state: GameState.InProgress,
             rnd: 0
         });
@@ -91,14 +102,21 @@ contract Game is owned {
 	{
 		if (ecrecover(random_id, _v, _r, _s) != owner) { // will be change to RSA
             Game game = listGames[random_id];
-			if(game.player != msg.sender){
-				uint8 rnd = uint8(sha3(_s, game.weapon, shield)) % 100;
+			if(game.player != msg.sender && game.rival == msg.sender){
+			    User attaking = listUsers[game.player];
+			    User protecting = listUsers[msg.sender];
+			    game.protecting = shield;
+			    attaking.countAttackMax ++;
+			    protecting.countDefenseMax ++;
+				uint8 rnd = uint8(sha3(_s, game.attaking, shield)) % 100;
 				game.rnd = rnd;
-				log(rnd);
+				logRnd(rnd);
 				if(rnd > 50){
-					listGames[random_id].state = GameState.PlayerWon;
+					game.state = GameState.PlayerWon;
+					attaking.countAttackWin ++;
 				} else {
-					listGames[random_id].state = GameState.PlayerLose;
+					game.state = GameState.PlayerLose;
+					protecting.countDefenseWin ++;
 				}
 			}
         }
@@ -115,5 +133,41 @@ contract Game is owned {
         }
 
         return game.state;
+    }
+	
+	function getAttackWin(address player) public constant returns(uint32) 
+	{
+        User memory user = listUsers[player];
+        if (user.player == 0) {
+            throw;
+        }
+        return user.countAttackWin;
+    }
+    
+	function getAttackMax(address player) public constant returns(uint32) 
+	{
+        User memory user = listUsers[player];
+        if (user.player == 0) {
+            throw;
+        }
+        return user.countAttackMax;
+    }
+    
+	function getDefenseWin(address player) public constant returns(uint32) 
+	{
+        User memory user = listUsers[player];
+        if (user.player == 0) {
+            throw;
+        }
+        return user.countDefenseWin;
+    }
+    
+	function getDefenseMax(address player) public constant returns(uint32) 
+	{
+        User memory user = listUsers[player];
+        if (user.player == 0) {
+            throw;
+        }
+        return user.countDefenseMax;
     }
 }
