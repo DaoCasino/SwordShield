@@ -2,7 +2,6 @@ var C_CREATE_USER = "4e832026";
 var C_BATTLE = "aa5f4c08";
 var C_CONFIRM = "56ca39b5";
 
-var obj_game = {};
 var _heroes = ["", "minotaur", "lizard", "druid"];
 var _offsetHeroes = [undefined, {x:70, y:0}, {x:45, y:15}, {x:0, y:-10}];
 var _callback;
@@ -14,6 +13,7 @@ var _countAttackWin = 0;
 var _countAttackMax = 0;
 var _countDefenseWin = 0;
 var _countDefenseMax = 0;
+var _this;
 
 function ScrGame() {
 	PIXI.Container.call( this );
@@ -34,7 +34,7 @@ ScrGame.prototype.init = function() {
 	this.addChild(this.user_mc);
 	this.addChild(this.face_mc);
 
-	obj_game["game"] = this;
+	_this = this;
 
 	this.bWindow = false;
 
@@ -109,14 +109,10 @@ ScrGame.prototype.createHero = function(){
 }
 
 ScrGame.prototype.createArt = function(){
-	var btnSelect = addObj("btnSelect");
-	this.face_mc.addChild(btnSelect);
-	var btnAttack = addButton2("btnAttack", _W/2-150, 200);
+	var btnAttack = addObj("btnAttack", _W/2-150, 200);
 	this.face_mc.addChild(btnAttack);
-	this._arButtons.push(btnAttack);
-	var btnDefense = addButton2("btnDefense", _W/2+150, 200);
+	var btnDefense = addObj("btnDefense", _W/2+150, 200);
 	this.face_mc.addChild(btnDefense);
-	this._arButtons.push(btnDefense);
 	var btnBattle = addButton2("btnBattle", _W/2, 350);
 	this.face_mc.addChild(btnBattle);
 	this._arButtons.push(btnBattle);
@@ -125,13 +121,6 @@ ScrGame.prototype.createArt = function(){
 	tfCountAttack.y = 300;
 	this.face_mc.addChild(tfCountAttack);
 
-	this.btnBattle = btnBattle;
-	this.btnSelect = btnSelect;
-	btnSelect.x = btnAttack.x;
-	btnSelect.y = btnAttack.y;
-
-	btnAttack.overSc = true;
-	btnDefense.overSc = true;
 	btnBattle.overSc = true;
 }
 
@@ -194,7 +183,9 @@ ScrGame.prototype.createUser = function(){
 	this.tfWait.visible = true;
 
 	Game.createUser( _curSkin, function(data){
-		console.log('OK', data)
+		_this.tfWait.visible = false;
+		_this.createArt();
+		_this.createText();
 	})
 }
 
@@ -204,7 +195,6 @@ ScrGame.prototype.battle = function(){
 		console.log(data)
 	})
 }
-
 
 ScrGame.prototype.resetTimer = function(){
 	// this.timeGetState = TIME_GET_STATE;
@@ -231,13 +221,7 @@ ScrGame.prototype.clickCell = function(item_mc) {
 	if(item_mc.name == "btnReady"){
 		this.createUser();
 	} else if(item_mc.name == "btnAttack"){
-		this.btnBattle.visible = true;
-		this.btnSelect.x = item_mc.x;
-		this.btnSelect.y = item_mc.y;
 	} else if(item_mc.name == "btnDefense"){
-		this.btnBattle.visible = false;
-		this.btnSelect.x = item_mc.x;
-		this.btnSelect.y = item_mc.y;
 		this.defense(_curSkin);
 	} else if(item_mc.name == "btnBattle"){
 		this.battle(_curSkin);
