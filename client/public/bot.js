@@ -1,4 +1,4 @@
-var game_url = 'http://10.0.0.10:9999';
+var game_url = 'http://10.0.0.20:9999';
 var user_context = ''
 var user_role = false
 
