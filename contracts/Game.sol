@@ -53,6 +53,7 @@ contract Game is owned {
     
     event logRnd(uint8 value);
     event logUser(address player);
+    event logGame(address attacking, address indexed protecting, bytes32 seed);
 	
 	modifier checkSkin(uint8 value) {
         if (value > DRUID && value < MINOTAUR) {
@@ -68,9 +69,9 @@ contract Game is owned {
         logUser(msg.sender);
 		
 		User memory user = listUsers[msg.sender];
-        if (user.player != 0) {
+        if (user.player != 0) { // only one register
             throw;
-        }
+        }  
 		
 	    listUsers[msg.sender] = User({
             player: msg.sender,
@@ -86,6 +87,8 @@ contract Game is owned {
 		public
 		checkSkin(skin)
 	{
+	    logGame(msg.sender, rival, seed);
+		
 		listGames[seed] = Game({
             player: msg.sender,
             rival: rival,
@@ -100,8 +103,9 @@ contract Game is owned {
     function confirm(bytes32 random_id, uint8 shield, uint8 _v, bytes32 _r, bytes32 _s)
 		public
 	{
-		if (ecrecover(random_id, _v, _r, _s) != owner) { // will be change to RSA
+		if (ecrecover(random_id, _v, _r, _s) != msg.sender) { // will be change to RSA
             Game game = listGames[random_id];
+            // check is this attacking user
 			if(game.player != msg.sender && game.rival == msg.sender){
 			    User attaking = listUsers[game.player];
 			    User protecting = listUsers[msg.sender];
