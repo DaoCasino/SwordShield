@@ -1,5 +1,8 @@
+var C_CREATE_USER = "4e832026";
+var C_BATTLE = "aa5f4c08";
+var C_CONFIRM = "56ca39b5";
+
 var obj_game = {};
-var api;
 var _heroes = ["", "minotaur", "lizard", "druid"];
 var _offsetHeroes = [undefined, {x:70, y:0}, {x:45, y:15}, {x:0, y:-10}];
 var _callback;
@@ -11,6 +14,7 @@ var _countAttackWin = 0;
 var _countAttackMax = 0;
 var _countDefenseWin = 0;
 var _countDefenseMax = 0;
+var _contract; 
 
 function ScrGame() {
 	PIXI.Container.call( this );
@@ -23,22 +27,31 @@ ScrGame.prototype.constructor = ScrGame;
 ScrGame.prototype.init = function() {
 	this.face_mc = new PIXI.Container();
 	this.game_mc = new PIXI.Container();
+	this.user_mc = new PIXI.Container();
 	this.gfx_mc = new PIXI.Container();
 	
 	this.addChild(this.game_mc);
 	this.addChild(this.gfx_mc);
+	this.addChild(this.user_mc);
 	this.addChild(this.face_mc);
 	
+	_contract = web3.eth.contract(abi, addressContract);
+	
 	obj_game["game"] = this;
-	api = new API(this);
 	
 	this.bWindow = false;
 	
 	this._arButtons = [];
 	_callback = this.response;
 	
-	this.createArt();
-	this.createText();
+	var tfWait = addText("WAIT...", 50, "#000000", undefined, "center", 400)
+	tfWait.x = _W/2;
+	tfWait.y = 900 - tfWait.height/2;
+	tfWait.visible = false;
+	this.face_mc.addChild(tfWait);
+	this.tfWait = tfWait;
+	
+	this.createHero();
 	
 	this.interactive = true;
 	this.on('mousedown', this.touchHandler);
@@ -48,7 +61,7 @@ ScrGame.prototype.init = function() {
 	this.on('touchend', this.touchHandler);
 }
 
-ScrGame.prototype.createArt = function(){
+ScrGame.prototype.createHero = function(){
 	this.hero = new PIXI.Container();
 	this.hero.x = _W/2;
 	this.hero.y = _H/2;
@@ -60,29 +73,60 @@ ScrGame.prototype.createArt = function(){
 	shadow.alpha = 0.3;
 	shadow.scale.y = 0.5;
 	shadow.y = 150;
+	shadow.visible = false;
 	this.hero.addChild(shadow);
-	this.refreshSkin(1);
+	this.shadow = shadow;
 	
+	var posY = 300;
+	var str = "Select unit";
+	var tfSelect = addText(str, 50, "#FFFFFF", "#000000", "center", 400, 4)
+	tfSelect.x = _W/2;
+	tfSelect.y = 150;
+	this.user_mc.addChild(tfSelect);
+	
+	var icoMinotaur = addButton2("ico_minotaur", _W/2-200, posY);
+	this.user_mc.addChild(icoMinotaur);
+	this._arButtons.push(icoMinotaur);
+	var icoLizard = addButton2("ico_lizard", _W/2, posY);
+	this.user_mc.addChild(icoLizard);
+	this._arButtons.push(icoLizard);
+	var icoDruid = addButton2("ico_druid", _W/2+200, posY);
+	this.user_mc.addChild(icoDruid);
+	this._arButtons.push(icoDruid);
+	var btnReady = addButton2("bntText", _W/2, 1000);
+	btnReady.name = "btnReady";
+	btnReady.visible = false;
+	this.user_mc.addChild(btnReady);
+	this._arButtons.push(btnReady);
+	icoMinotaur.overSc = true;
+	icoLizard.overSc = true;
+	icoDruid.overSc = true;
+	btnReady.overSc = true;
+	
+	var tfReady = addText("READY", 50, "#000000", undefined, "center", 150)
+	tfReady.x = 0;
+	tfReady.y = -tfReady.height/2;
+	btnReady.addChild(tfReady);
+	
+	this.btnReady = btnReady;
+}
+
+ScrGame.prototype.createArt = function(){
 	var btnSelect = addObj("btnSelect");
 	this.face_mc.addChild(btnSelect);
 	var btnAttack = addButton2("btnAttack", _W/2-150, 200);
 	this.face_mc.addChild(btnAttack);
-	// this._arButtons.push(btnAttack);
+	this._arButtons.push(btnAttack);
 	var btnDefense = addButton2("btnDefense", _W/2+150, 200);
 	this.face_mc.addChild(btnDefense);
-	// this._arButtons.push(btnDefense);
+	this._arButtons.push(btnDefense);
 	var btnBattle = addButton2("btnBattle", _W/2, 350);
 	this.face_mc.addChild(btnBattle);
 	this._arButtons.push(btnBattle);
-	var icoMinotaur = addButton2("ico_minotaur", _W/2-200, 1000);
-	this.face_mc.addChild(icoMinotaur);
-	this._arButtons.push(icoMinotaur);
-	var icoLizard = addButton2("ico_lizard", _W/2, 1000);
-	this.face_mc.addChild(icoLizard);
-	this._arButtons.push(icoLizard);
-	var icoDruid = addButton2("ico_druid", _W/2+200, 1000);
-	this.face_mc.addChild(icoDruid);
-	this._arButtons.push(icoDruid);
+	var tfCountAttack = addText("0/0", 30, "#000000", undefined, "center", 400)
+	tfCountAttack.x = _W/2-150;
+	tfCountAttack.y = 300;
+	this.face_mc.addChild(tfCountAttack);
 	
 	this.btnBattle = btnBattle;
 	this.btnSelect = btnSelect;
@@ -92,17 +136,9 @@ ScrGame.prototype.createArt = function(){
 	btnAttack.overSc = true;
 	btnDefense.overSc = true;
 	btnBattle.overSc = true;
-	icoMinotaur.overSc = true;
-	icoLizard.overSc = true;
-	icoDruid.overSc = true;
 }
 
 ScrGame.prototype.createText = function(){
-	var str = "Select unit";
-	var tfSelect = addText(str, 40, "#000000", undefined, "center", 400)
-	tfSelect.x = _W/2;
-	tfSelect.y = _H/2+250;
-	this.face_mc.addChild(tfSelect);
 	var tfCountAttack = addText("0/0", 30, "#000000", undefined, "center", 400)
 	tfCountAttack.x = _W/2-150;
 	tfCountAttack.y = 300;
@@ -146,6 +182,8 @@ ScrGame.prototype.refreshSkin = function(value){
 	if(skin){
 		this.hero.removeChild(skin);
 	}
+	this.shadow.visible = true;
+	this.btnReady.visible = true;
 	var name = _heroes[value];
 	var ofs = _offsetHeroes[value];
 	var skin = addObj(name, ofs.x, ofs.y);
@@ -153,34 +191,18 @@ ScrGame.prototype.refreshSkin = function(value){
 	this.hero.skin = skin;
 }
 
-ScrGame.prototype.response = function(command, value, error) {
-	var prnt = obj_game["game"];
-	
-	if(value == undefined || error || options_debug){
-		if(command == "sendRaw" || command == "gameTxHash"){
-			if(error){
-				// OUT OF GAS - error client (wrong arguments from the client)
-				// invalid JUMP - throw contract
-				console.log("response:", error);
-				// prnt.showError(error.message);
-			} else {
-				// prnt.showError(ERROR_CONTRACT);
-			}
-			// prnt.bWait = false;
-		}
-		return false;
-	}
-	
-	if(command == "getGameState"){
-		
-	} else if(command == "battle" ||
-			command == "confirm"){
-		prnt.responseTransaction(command, value);
-	} else if(command == "responseServer"){
-		prnt.sendSeed(value);
-	} else if(command == "sendRaw"){
-		// prnt.timeWaitResponse = 0;
-	}
+ScrGame.prototype.createUser = function(){
+	console.log("createUser");
+	this.user_mc.visible = false;
+	this.tfWait.visible = true;
+}
+
+ScrGame.prototype.battle = function(seed){
+	console.log("battle:", seed);
+}
+
+ScrGame.prototype.defense = function(seed){
+	console.log("defense:", seed);
 }
 
 ScrGame.prototype.resetTimer = function(){
@@ -205,7 +227,9 @@ ScrGame.prototype.clickCell = function(item_mc) {
 		item_mc.scale.y = 1*item_mc.sc;
 	}
 	
-	if(item_mc.name == "btnAttack"){
+	if(item_mc.name == "btnReady"){
+		this.createUser();
+	} else if(item_mc.name == "btnAttack"){
 		this.btnBattle.visible = true;
 		this.btnSelect.x = item_mc.x;
 		this.btnSelect.y = item_mc.y;
@@ -213,9 +237,9 @@ ScrGame.prototype.clickCell = function(item_mc) {
 		this.btnBattle.visible = false;
 		this.btnSelect.x = item_mc.x;
 		this.btnSelect.y = item_mc.y;
-		api.defense(_curSkin);
+		this.defense(_curSkin);
 	} else if(item_mc.name == "btnBattle"){
-		api.battle(_curSkin);
+		this.battle(_curSkin);
 	} else if(item_mc.name == "ico_minotaur"){
 		this.refreshSkin(1);
 	} else if(item_mc.name == "ico_lizard"){

@@ -38,11 +38,12 @@ Infura.prototype.makeID = function(count){
 }
 
 Infura.prototype.sendRequest = function(name, params, callback, seed){
-	if(options_ethereum && openkey){
+	if(openkey){
 		var method = name;
 		var arParams = [params, "latest"]; // latest, pending
 		
 		switch(name){
+			case "createUser":
 			case "battle":
 			case "confirm":
 				method = "eth_getTransactionCount";
