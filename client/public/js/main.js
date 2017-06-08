@@ -96,14 +96,14 @@ function loadManifest(){
 	preloader.add("btnDefense", "images/items/btnDefense.png");
 	preloader.add("btnBattle", "images/items/btnBattle.png");
 	preloader.add("btnSelect", "images/items/btnSelect.png");
-	preloader.add("druid", "images/items/druid.png");
-	preloader.add("lizard", "images/items/lizard.png");
-	preloader.add("minotaur", "images/items/minotaur.png");
+	// preloader.add("druid", "images/items/druid.png");
+	// preloader.add("lizard", "images/items/lizard.png");
+	// preloader.add("minotaur", "images/items/minotaur.png");
 	preloader.add("ico_druid", "images/items/ico_druid.png");
 	preloader.add("ico_lizard", "images/items/ico_lizard.png");
 	preloader.add("ico_minotaur", "images/items/ico_minotaur.png");
 
-	// preloader.add("images/texture/ItemsTexure.json");
+	preloader.add("images/texture/UnitsTexture.json");
 
 	preloader.on("progress", handleProgress);
 	preloader.load(handleComplete);
@@ -119,7 +119,7 @@ function spritesLoad() {
 }
 
 function textureLoad() {
-
+	iniSet("images/texture/UnitsTexture.json");
 }
 
 function iniSet(set_name) {
