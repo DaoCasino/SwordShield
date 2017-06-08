@@ -34,8 +34,17 @@ const networks = {
 	},
 }
 
+const firebase = {
+	apiKey:            "AIzaSyAz1qr7gngalx-lBka6jWw_dSuEQi-CvcE",
+	authDomain:        "bankrollapp-dc105.firebaseapp.com",
+	databaseURL:       "https://bankrollapp-dc105.firebaseio.com",
+	projectId:         "bankrollapp-dc105",
+	storageBucket:     "",
+	messagingSenderId: "377080181945"
+}
 
 module.exports = {
+	firebase        : firebase,
 	wallet_pass     : '1234',
 
 	network         : current_network,
@@ -46,5 +55,5 @@ module.exports = {
 	contract        : require('./contract.js').default,
 
 	confirm_timeout : 7000,
-	// api_url         : 'https://platform.dao.casino/api/',
+	api_url         : 'https://platform.dao.casino/api/',
 }
