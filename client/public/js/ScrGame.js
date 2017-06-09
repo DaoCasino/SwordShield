@@ -17,6 +17,7 @@ var _this;
 var _arcade = true;
 var _timeProtect = 3000;
 var _initGame = false;
+var _bolt;
 
 function ScrGame() {
 	PIXI.Container.call( this );
@@ -216,6 +217,22 @@ ScrGame.prototype.addRival = function(value){
 	skin.img.animationSpeed = 0.5;
 	this.rival.addChild(skin);
 	this.rival.skin = skin;
+	
+	if(_curSkin == 3 || value == 3){
+		_bolt = addObj("bolt", 0, 0, 1);
+		_bolt.img.animationSpeed = 0.5;
+		this.game_mc.addChild(_bolt);
+		if(_curSkin == 3){
+			_bolt.x = this.rival.x;
+			_bolt.y = this.rival.y;
+		} else {
+			_bolt.x = this.hero.x;
+			_bolt.y = this.hero.y;
+			this.rival.bolt = true;
+		}
+		_bolt.y -= 200;
+		_bolt.visible = false;
+	}
 }
 
 ScrGame.prototype.createUser = function(){
@@ -264,12 +281,23 @@ ScrGame.prototype.update = function(diffTime){
 		return false;
 	}
 
+	if(_bolt){
+		if(_bolt.img.currentFrame >= _bolt.img.totalFrames-2){
+			_bolt.visible = false;
+			_bolt.img.gotoAndStop(1);
+		}
+	}
+	
 	if(this.hero){
 		var skin = this.hero.skin;
 		if(skin){
 			if(skin.img.currentFrame >= skin.img.totalFrames-2){
 				this.btnBattle.alpha = 1;
 				skin.img.gotoAndStop(1);
+				if(_bolt && _curSkin == 3){
+					_bolt.visible = true;
+					_bolt.img.play();
+				}
 			}
 		}
 	}
@@ -279,6 +307,10 @@ ScrGame.prototype.update = function(diffTime){
 		if(skin2){
 			if(skin2.img.currentFrame >= skin2.img.totalFrames-2){
 				skin2.img.gotoAndStop(1);
+				if(_bolt && this.rival.bolt){
+					_bolt.visible = true;
+					_bolt.img.play();
+				}
 			}
 		}
 
