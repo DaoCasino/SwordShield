@@ -1,9 +1,10 @@
 World of warcraft on Ethereum :slightly_smiling_face:
+<Br><Br>
 
-
-The presentation http://slides.com/huanderalexander/sward-shield#/5
-Forontend demo: https://swordshield-94d17.firebaseapp.com/
-Youtube demo: https://youtu.be/kUHB9vx11Cg
+The presentation http://slides.com/huanderalexander/sward-shield#/5 <Br>
+Forontend demo: https://swordshield-94d17.firebaseapp.com/<Br>
+Youtube demo: https://youtu.be/kUHB9vx11Cg<Br>
+Verified contract: https://ropsten.etherscan.io/address/0x3d63d2553330c47d3f2c7f23fda2fcdc04883114
 
 Completely decentralized and fast game. Attack enemies or defend yourself. Runs in the background
 
@@ -18,4 +19,4 @@ very fast random - signidice + whisper
 problems with status.im
 1) we cannot start whisper in bot.js and browser.
 2) web3 in browser does not working (say "undefined provider")
-3) so we just publish source codes, your programmers may check logic. Verified contract:
+3) so we just publish source codes, your programmers may check logic. 
