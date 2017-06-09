@@ -1,21 +1,22 @@
-var game_url = 'http://10.0.0.20:9999';
-var user_context = '';
-var enemy_selected = false;
+var game_url         = 'https://swordshield-94d17.firebaseapp.com/';
+var userIdentity     = '';
+var user_context     = '';
+var enemy_selected   = false;
 var contract_address = '0x6ae02b2f861b071af202ab7caface8929fe42529';
-var enemies = []
-var enemies_str = '';
+var enemies          = []
+var enemies_str      = '';
 
 
 status.addListener("init", function (params, context) {
 	user_context = context
 	status.sendMessage( 'Hi! This is completely decentralized and fast game. Where you attack enemies or defend yourself.' );
+
 	status.sendMessage( 'Run /startgame command' );
 });
 
 
 
 var usercreated = false;
-
 function createUser(){
 	if (usercreated) { return }
 
@@ -39,8 +40,22 @@ function createUser(){
 
 
 function Attack(enemy){
-	// shh.post ... not work
+	if (!userIdentity) {
+		userIdentity = web3.shh.newIdentity()
+	}
 
+	var seed = makeSeed(65); // random bytes32
+
+	// Send attack message to user
+	web3.shh.post({
+		"from":     userIdentity,
+		"topics":   [ web3.fromAscii('SS_Attack') ],
+		"payload":  [ seed, enemy ],
+		"ttl":      100,
+		"priority": 1000
+	});
+
+	// Log attack to contract
 	var params = {
 		from:     web3.eth.accounts[0],
 		to:       contract_address,
@@ -50,52 +65,62 @@ function Attack(enemy){
 
 		data:  '0x689a9add00000000000000000000000000000000000000000000000000000000000000026162636465663031323334353637383961626364656630313233343536373839000000000000000000000000'+enemy,
 	}
+	web3.eth.sendTransaction(params, function(err, res){ })
 
-	web3.eth.sendTransaction(params, function(err, res){
-		status.sendMessage(res)
-		status.sendMessage('Enemy attacked: ' + enemy)
-	})
+	status.sendMessage('Enemy attacked: ' + enemy)
 }
 
 
 
-function findEnemy(){
-	status.sendMessage('Find enemies!')
-	var filter = web3.eth.filter({fromBlock:1077192, toBlock: 'latest', address: contract_address});
-	filter.watch(function(error, result){
-	  if (result && result.topics && result.topics[0] == '0xb124611581bfef7f8eb3c5f37021d06d67c3e49df90a5a581431e70cb6cfcd61' ) {
-			//search enemies
-			var enemy = result.data.substr(26);
-			// if (enemy!=user_context) {
-			// };
-			enemies.push('Attack: '+enemy)
-			enemies_str += ' '+enemy+', '
-
-			if (enemies.length > 2) {
-				status.sendMessage('Select enemies: ' + enemies_str)
-				selectEnemies()
-				filter.stopWatching();
-			};
+function listenAttack(){
+	var broadcastWatch = web3.shh.watch({ "topic": [ web3.fromAscii(appName) ] });
+	broadcastWatch.arrived(function(m){
+		if (m.from == userIdentity || web3.toAscii(m.payload).indexOf(userIdentity) < 0 ){
+			return
 		}
-	});
-}
 
+		status.sendMessage('You attacked!');
 
-function waitAttack(){
-	// shh.watch ... not work
+		// Generate random
+		var seed = parseSeedFromPayload(m.payload)
+		var attackerSkin = parseAttackerSkinFromPayload(m.payload)
+		web3.eth.sign(web3.eth.accounts[0], seed, function(VRS){
+			var r = VRS.slice[0   , 64]; var s = VRS.slice[64  , 128]; var v = VRS.slice[128 , 130];
 
-	var filter = web3.eth.filter({fromBlock:1077192, toBlock: 'latest', address: contract_address});
-	filter.watch(function(error, result){
-		if (result.topics[1] && result.topics[1].indexOf(web3.eth.accounts[0].substr(2))>-1) {
+			var hash = '0x'+web3.sha3(seed,attackerSkin, userSkin).toString('hex');
+			var rnd  = bigInt(hash,16).divmod(100).remainder.value;
 
-			var attacker = result.data.substr(26,40);
-			var seed     = result.data.substr(66);
+			if (rnd < 50) {
+				status.sendMessage('You win!');
+				attaking.countWin ++;
+			} else {
+				status.sendMessage('You loose!');
+				attaking.countLoose ++;
+			}
 
-			status.sendMessage('attacker:'+attacker);
-			status.sendMessage('seed:'+seed);
+			// Fast Send res to attacker
+			web3.shh.post({
+				"from":     userIdentity,
+				"to":       m.from,
+				"topics":   [ web3.fromAscii('SS_Defense') ],
+				"payload":  [ seed, rnd],
+				"ttl":      2,
+				"priority": 500
+			});
 
-			Protection(seed)
-		}
+			// Send res to game contract
+			var params = {
+				from:     web3.eth.accounts[0],
+				to:       contract_address,
+				value:    0,
+				gasPrice: '0x737be7600',
+				gas:      '0x927c0',
+
+				data:  '0x56ca39b500000000000000000000000000000000000000000000000000000000000000026162636465663031323334353637383961626364656630313233343536373839000000000000000000000000'
+					+rnd+'0'+seed
+			}
+			web3.eth.sendTransaction(params, function(err, res){ })
+		});
 	});
 }
 
@@ -213,7 +238,6 @@ status.addListener("on-message-send", function (params, context) {
 
 
 
-
 status.command({
 	name:           "opengame",
 	title:          "Open Game Frontend",
@@ -236,8 +260,9 @@ status.command({
 });
 
 
+var win = false;
 status.command({
-	name:           "start_bot_game",
+	name:           "startgame",
 	title:          "Start Bot Game",
 	description:    "Start bot game",
 	color:          "#ffa500",
