@@ -5,7 +5,7 @@ The presentation http://slides.com/huanderalexander/sward-shield<Br>
 Frontend demo: https://swordshield-94d17.firebaseapp.com/<Br>
 Youtube demo: https://youtu.be/kUHB9vx11Cg<Br>
 Verified contract: https://ropsten.etherscan.io/address/0x3d63d2553330c47d3f2c7f23fda2fcdc04883114 <br>
-Signidice random: https://github.com/gluk256/misc/blob/master/rng4ethereum/signidice.md
+Signidice random: https://github.com/DaoCasino/Whitepaper/blob/master/DAO.Casino%20WP.md#231-mvp-components-of-the-system-to-be-released-by-the-time-of-the-token-launch
 
 Completely decentralized and fast game. Attack enemies or defend yourself. Runs in the background
 
