@@ -2,9 +2,10 @@ World of warcraft on Ethereum :slightly_smiling_face:
 <Br><Br>
 
 The presentation http://slides.com/huanderalexander/sward-shield#/5 <Br>
-Forontend demo: https://swordshield-94d17.firebaseapp.com/<Br>
+Frontend demo: https://swordshield-94d17.firebaseapp.com/<Br>
 Youtube demo: https://youtu.be/kUHB9vx11Cg<Br>
 Verified contract: https://ropsten.etherscan.io/address/0x3d63d2553330c47d3f2c7f23fda2fcdc04883114
+Signidice random: https://github.com/gluk256/misc/blob/master/rng4ethereum/signidice.md
 
 Completely decentralized and fast game. Attack enemies or defend yourself. Runs in the background
 
@@ -14,7 +15,7 @@ Completely decentralized and fast game. Attack enemies or defend yourself. Runs 
 4. Upload result to the blockchain 
 
 features:
-very fast random - signidice + whisper
+very fast random = signidice + whisper
 
 problems with status.im
 1) we cannot start whisper in bot.js and browser.
