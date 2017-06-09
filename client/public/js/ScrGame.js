@@ -206,7 +206,7 @@ ScrGame.prototype.addRival = function(value){
 	if(value > 3){
 		value = 1;
 	}
-	
+
 	var name = _heroes[value];
 	var ofs = _offsetHeroes[value];
 	var sc = 1.5;
@@ -224,7 +224,7 @@ ScrGame.prototype.createUser = function(){
 	this.tfWait.visible = true;
 	_initGame = true;
 
-	Game.createUser( _curSkin, function(data){
+	// Game.createUser( _curSkin, function(data){
 		_this.tfWait.visible = false;
 		_this.btnReady.visible = false;
 		_this.createArt();
@@ -234,17 +234,18 @@ ScrGame.prototype.createUser = function(){
 		_this.icoDruid.visible = false;
 		_this.hero.x = _W/2-150;
 		_this.addRival(_curSkin);
-	})
+	// })
 }
 
 ScrGame.prototype.battle = function(){
 	console.log("battle");
 	this.btnBattle.alpha = 0.5;
 	this.hero.skin.img.play();
-	Game.battle(_curSkin, function(data){
-		console.log(data)
-	})
-	
+
+	// Game.battle(_curSkin, function(data){
+	// 	console.log(data)
+	// })
+
 	if(_arcade){
 		_countAttackMax ++;
 		if(Math.random() > 0.5){
@@ -262,7 +263,7 @@ ScrGame.prototype.update = function(diffTime){
 	if(options_pause){
 		return false;
 	}
-	
+
 	if(this.hero){
 		var skin = this.hero.skin;
 		if(skin){
@@ -272,7 +273,7 @@ ScrGame.prototype.update = function(diffTime){
 			}
 		}
 	}
-	
+
 	if(this.rival){
 		var skin2 = this.rival.skin;
 		if(skin2){
@@ -280,7 +281,7 @@ ScrGame.prototype.update = function(diffTime){
 				skin2.img.gotoAndStop(1);
 			}
 		}
-		
+
 		if(_arcade && _initGame){
 			_timeProtect -= diffTime;
 			if(_timeProtect < 0){
@@ -310,7 +311,7 @@ ScrGame.prototype.clickCell = function(item_mc) {
 		item_mc.scale.x = 1*item_mc.sc;
 		item_mc.scale.y = 1*item_mc.sc;
 	}
-	
+
 	if(item_mc.name == "btnReady"){
 		this.createUser();
 	} else if(item_mc.name == "btnAttack"){

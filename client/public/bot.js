@@ -216,9 +216,9 @@ status.addListener("on-message-send", function (params, context) {
 
 status.command({
 	name:           "opengame",
-	title:          "Open Game",
+	title:          "Open Game Frontend",
 	registeredOnly: true,
-	description:    "Open game",
+	description:    "Open game frontend",
 	color:          "#ffa500",
 	fullscreen:     true,
 
@@ -237,9 +237,9 @@ status.command({
 
 
 status.command({
-	name:           "startgame",
-	title:          "Start Game",
-	description:    "Start game",
+	name:           "start_bot_game",
+	title:          "Start Bot Game",
+	description:    "Start bot game",
 	color:          "#ffa500",
 	onSend: function(params, context){
 		createUser();

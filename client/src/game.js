@@ -55,7 +55,7 @@ export default class Game {
 		console.log( _config.contract.address )
 
 
-
+		callback()
 // console.log(skin)
 
 // 		Eth.Wallet.signedContractFuncTx(_config.contract.address, _config.contract.address.abi,
@@ -80,24 +80,19 @@ export default class Game {
 		let seed = this.generateSeed()
 
 		let data = '0x' + Eth.hashName('battle(uint8,bytes32,address)')
-console.log(skin)
-		console.log(Utils.pad(Utils.numToHex(skin), 64))
-
 			data += Utils.pad(Utils.numToHex(skin), 64)
-		console.log(seed.substr(2))
 			data += seed.substr(2)
-		console.log(this.getRival().substr(2))
 			data += this.getRival().substr(2)
-		console.log(data)
 
-		Eth.RPC.request('call', [{
-			'to':   _config.contract.address,
-			'data': data
-		}, 'pending'], 0).then( response => {
-			console.log(response)
-			callback(response.result)
-		})
+		// Eth.RPC.request('call', [{
+		// 	'to':   _config.contract.address,
+		// 	'data': data
+		// }, 'pending'], 0).then( response => {
+		// 	console.log(response)
+		// 	callback(response.result)
+		// })
 	}
+
 
 	runConfirm(){
 		// seed, skin v,r,s

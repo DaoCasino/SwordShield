@@ -1,7 +1,7 @@
 
 import './style.less'
 
-import Game from './game.js'
+// import Game from './game.js'
 
 let parseHashParams = hash=>{
 	if (hash.length<3) {
@@ -19,5 +19,5 @@ let parseHashParams = hash=>{
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
-	window.Game = new Game(parseHashParams(window.location.hash))
+	// window.Game = new Game(parseHashParams(window.location.hash))
 })

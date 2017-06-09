@@ -58,8 +58,11 @@ function initGame() {
 	// random BG
 	var rndBg = Math.ceil(Math.random()*3);
 	$('body').css({'background-image':'url("/images/bg/bgArena_'+rndBg+'.jpg")'})
+
     //initialize the stage
 	renderer = PIXI.autoDetectRenderer(_W, _H,  {antialias: false, transparent: true, resolution: 1});
+	// renderer = PIXI.autoDetectRenderer(_W, _H);
+
     stage = new PIXI.Container();
     document.body.appendChild(renderer.view);
     preloader = new PIXI.loaders.Loader();
@@ -68,7 +71,33 @@ function initGame() {
 
 	startTime = getTimer();
     onResize();
-    update();
+
+    // update();
+	var ticker = PIXI.ticker.shared;
+	ticker.add(function (time) {
+		renderer.render(stage);
+
+		var diffTime = getTimer() - startTime;
+		if(diffTime > 29){
+			if (ScreenGame) {
+				ScreenGame.update(diffTime);
+			}
+
+			startTime = getTimer();
+		}
+
+	});
+
+
+	// // Set this to prevent starting this ticker when listeners are added.
+	// // By default this is true only for the PIXI.ticker.shared instance.
+	// ticker.autoStart = false;
+	// // FYI, call this to ensure the ticker is stopped. It should be stopped
+	// // if you have not attempted to render anything yet.
+	// ticker.stop();
+	// // Call this when you are ready for a running shared ticker.
+	// ticker.start();
+
 
 	LoadBack = new PIXI.Container();
 	stage.addChild(LoadBack);
@@ -225,6 +254,8 @@ function getTimer(){
 function refreshTime(){
 	startTime = getTimer();
 }
+
+
 
 function update() {
 	raf(update);
